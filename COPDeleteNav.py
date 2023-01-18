@@ -36,11 +36,14 @@ text6 = None
 
 for index, li in enumerate(util_nav_elements):
     if index == 0:
-        text4 = li.text.strip()
-    elif index == 1:
-        text5 = li.text.strip()
+        text = li
+        text.string = text1
+    elif index == 1 and text2 != None:
+        text5 = li.a
+        text5.string = text2
     else:
-        text6 = li.text.strip()
+        text6 = li
+        text6.string = text3
 
+# print(util_nav_elements)
 #Replace text in utility nav with translated text
-
