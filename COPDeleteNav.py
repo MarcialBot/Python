@@ -45,5 +45,10 @@ for index, li in enumerate(util_nav_elements):
         text6 = li
         text6.string = text3
 
-# print(util_nav_elements)
-#Replace text in utility nav with translated text
+#Replace old util nav with new util nav
+zh_nav.clear()
+zh_nav.append(utility_nav)
+
+#Write new file
+with open("index_zh_new.html", "w") as file:
+    file.write(zh_file.prettify())
