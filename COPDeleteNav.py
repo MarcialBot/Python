@@ -106,8 +106,6 @@ def create_translated_util_nav():
     with open(utility_nav_translated, "w") as file:
         file.write(str(utility_nav_file.prettify()))
 
-    replace_util_nav()
-
 create_translated_util_nav()
 
 def get_html_files():
@@ -118,7 +116,6 @@ def get_html_files():
     for root, dirs, files in os.walk(current_dir): #Get files from test_html directory  and subdirectories
         for file in files:
             if file.endswith(".html"):
-                html_files.append(file)
                 html_files.append(os.path.join(root, file))
 
     return html_files
@@ -134,7 +131,11 @@ def replace_util_nav():
     if html_files != [] and utility_nav_translated_element != None:
         for file in html_files:
             if file != utility_nav_translated_import:
+                print("Writing to file: ", file)
                 html_file = BeautifulSoup(open(file), "html.parser")
                 old_utility_nav = html_file.find("div", {"class": "utility-nav"})
                 old_utility_nav.replace_with(utility_nav_translated_element)
+                html = html_file.prettify()
+                print(old_utility_nav.prettify())
 
+replace_util_nav()
