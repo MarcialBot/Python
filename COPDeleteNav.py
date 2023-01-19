@@ -2,53 +2,70 @@ import os
 from bs4 import BeautifulSoup
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
-#Import language files
-zh_import = os.path.join(current_directory, "html", "index_zh.html")
-zh_file = BeautifulSoup(open(zh_import), "html.parser")
-zh_nav = zh_file.find("div", {"class": "utility-nav"})
+def get_html_files():
+#Function to get all html files in current directory
+    current_dir = os.getcwd()
+    html_files = []
+    for root, dirs, files in os.walk(current_dir): #Get files from test_html directory  and subdirectories
+        for file in files:
+            if file.endswith(".html"):
+                html_files.append(file)
+                #html_files.append(os.path.join(root, file))
+    return html_files
 
-#Import utility nav file
-utility_nav_import = os.path.join(current_directory, "html", "utility_nav.html")
-utility_nav_file = BeautifulSoup(open(utility_nav_import), "html.parser")
-utility_nav = utility_nav_file.find("div", {"class": "utility-nav"})
+html_files = get_html_files()
 
-#Language text
-lang_elements = zh_file.find_all("li", {"class": "gov-site"})
+def create_translated_util_nav():
+#Function to create translated utility nav
+    text1 = None
+    text2 = None
+    text3 = None
+    text4 = None
+    text5 = None
+    text6 = None
 
-text1 = None
-text2 = None
-text3 = None
+    utility_nav_import = os.path.join(current_directory, "html", "utility_nav.html")
+    utility_nav_file = BeautifulSoup(open(utility_nav_import), "html.parser")
+    utility_nav = utility_nav_file.find("div", {"class": "utility-nav"}) 
+    util_nav_elements = utility_nav.find_all("li", {"class": "gov-site"})
 
-for index, li in enumerate(lang_elements):
-    for span in li.find_all('span'):
-        text1 = span.text.strip()
-    if index == 0:
-        text2 = li.text.replace(text1,"").strip()
-    else:
-        text3 = li.text.strip()
+    zh_import = os.path.join(current_directory, "html", "index_zh.html")
+    zh_file = BeautifulSoup(open(zh_import), "html.parser")
+    zh_nav = zh_file.find("div", {"class": "utility-nav"})
+    lang_elements = zh_file.find_all("li", {"class": "gov-site"})
 
-#Replace utility nav text with language text
-util_nav_elements = utility_nav.find_all("li", {"class": "gov-site"})
+    for index, li in enumerate(lang_elements):
+        for span in li.find_all('span'):
+            text1 = span.text.strip()
+        if index == 0:
+            text2 = li.text.replace(text1,"").strip()
+        else:
+            text3 = li.text.strip()
+    
+    for index, li in enumerate(util_nav_elements):
+        if index == 0:
+            text4 = li
+            text4.string = text1
+        elif index == 1 and text2 != None:
+            text5 = li.a
+            text5.string = text2
+        else:
+            text6 = li
+            text6.string = text3
 
-text4 = None
-text5 = None
-text6 = None
+    zh_file.find("div", {"class": "utility-nav"}).replace_with(utility_nav)
+    with open("utility_nav_translated_test.html", "w") as file:
+        file.write(str(zh_file.prettify()))
 
-for index, li in enumerate(util_nav_elements):
-    if index == 0:
-        text = li
-        text.string = text1
-    elif index == 1 and text2 != None:
-        text5 = li.a
-        text5.string = text2
-    else:
-        text6 = li
-        text6.string = text3
+create_translated_util_nav()
 
-#Replace old util nav with new util nav
-zh_nav.clear()
-zh_nav.append(utility_nav)
-
-#Write new file
-with open("index_zh_new.html", "w") as file:
-    file.write(zh_file.prettify())
+def replace_util_nav():
+    utility_nav_translated_import = os.path.join(current_directory, "html", "utility_nav_translated.html")
+    utility_nav_translated_file = BeautifulSoup(open(utility_nav_translated_import), "html.parser")
+    utility_nav_translated = utility_nav_translated_file.find("div", {"class": "utility-nav"})
+#Function to use translated util nav in all html files
+    for file in html_files:
+        with open(file, "r") as f:
+            soup = BeautifulSoup(f, "html.parser")
+            old_util_nav = soup.find("div", {"class": "utility-nav"})
+            old_util_nav.replace_with(new_utility_nav)
