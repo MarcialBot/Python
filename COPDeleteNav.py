@@ -66,7 +66,7 @@ utility_nav = '''<div class="utility-nav">
 # 3. Replace utility nav in all html files
 
 def create_translated_util_nav():
-#Function to create translated utility nav
+#Create translated utility nav
     text1 = None
     text2 = None
     text3 = None
@@ -106,10 +106,9 @@ def create_translated_util_nav():
     with open(utility_nav_translated, "w") as file:
         file.write(str(utility_nav_file.prettify()))
 
-create_translated_util_nav()
 
 def get_html_files():
-# Function to get all html files in current directory
+# Get all html files in current directory
 # Output: List of html files in current directory
     current_dir = os.getcwd()
     html_files = []
@@ -130,12 +129,16 @@ def replace_util_nav():
     #Replace the utility nav in all html files
     if html_files != [] and utility_nav_translated_element != None:
         for file in html_files:
+            dir_path = os.path.dirname(file)
+
             if file != utility_nav_translated_import:
                 print("Writing to file: ", file)
                 html_file = BeautifulSoup(open(file), "html.parser")
                 old_utility_nav = html_file.find("div", {"class": "utility-nav"})
                 old_utility_nav.replace_with(utility_nav_translated_element)
                 html = html_file.prettify()
-                print(old_utility_nav.prettify())
+                print(html)
 
+
+create_translated_util_nav()
 replace_util_nav()
